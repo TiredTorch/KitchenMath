@@ -49,8 +49,8 @@ def AddDish():
         ws1['A'+str(i+2+j)].value = ws0['B'+str(a+2)].value
         ws1['B'+str(i+2+j)].value = ws0['C'+str(a+2)].value
 
-        ws1['C'+str(i+2+j)].value = int(input('Введите кол-во для сада: '))
-        ws1['D'+str(i+2+j)].value = int(input('Введите кол-во для яслей: '))
+        ws1['C'+str(i+2+j)].value = float(input('Введите кол-во для сада: '))
+        ws1['D'+str(i+2+j)].value = float(input('Введите кол-во для яслей: '))
 
         ws1['E'+str(i+2+j)].value = '=B'+str(i+2+j)+'*C'+str(i+2+j)+'/1000'
         ws1['F'+str(i+2+j)].value = '=B'+str(i+2+j)+'*D'+str(i+2+j)+'/1000'

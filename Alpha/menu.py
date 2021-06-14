@@ -23,6 +23,8 @@ def Menu():
             print('Блюдо успешно добавлено')
         elif(act == 3):
             db.FillReport()
+            print(chr(27) + "[2J")
+            print('Отчет успешно составлен')
         elif(act == 4):
             print('-------------------------------------------------------')
             db.ShowIngredientID()
