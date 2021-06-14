@@ -22,7 +22,7 @@ def Menu():
             print(chr(27) + "[2J")
             print('Блюдо успешно добавлено')
         elif(act == 3):
-            print('Coming soon')
+            db.FillReport()
         elif(act == 4):
             print('-------------------------------------------------------')
             db.ShowIngredientID()

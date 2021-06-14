@@ -6,8 +6,10 @@ wb.active = 0  #база данных ингредиентов
 ws0 = wb.active
 wb.active = 1  #база данных блюд
 ws1 = wb.active
-wbT.active = 0  #переменные шаблона
-wsT = wbT.active
+wbT.active = 0  #переменные шаблона Сада
+wsT1 = wbT.active
+wbT.active = 1  #переменные шаблона Яслей
+wsT2 = wbT.active
 
 def AddIngredient(): 
     print(chr(27) + "[2J")
@@ -91,18 +93,24 @@ def FillReport():
 
 
     letters = ['D','F','H','J','L','N']
-    PrepareTable(letters)
+    PrepareTable(letters, wsT1)
+    PrepareTable(letters, wsT2)
 
     for FT in range (3):
         print(chr(27) + "[2J")
         dishesAmount = int(input('Сколько блюд в ' + str(FT + 1) + ' приеме пищи: '))
         for DT in range (dishesAmount):
-            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]))
+            print(chr(27) + "[2J")
+            print('Для '+str((DT+1))+' блюда: ')
+            print('Сад:')
+            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT1, 'E')
+            print('Ясли:')
+            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT2, 'F')
 
     
-    wbT.save("DBA.xlsx")
+    wbT.save(str(input('Введите название документа: '))+'.xlsx')
 
-def DishPars(firCell, secCell):
+def DishPars(firCell, secCell, wsT, ForE):
 
     tempDishID = int(input('Введите ID блюда: '))
 
@@ -113,20 +121,21 @@ def DishPars(firCell, secCell):
         pointDB+=1
     
     wsT[firCell+'11'].value += (ws1['A'+str(pointDB)].value + '\n')
-    IngrPars(pointDB, firCell, secCell)
+    IngrPars(pointDB, firCell, secCell, wsT, ForE)
 
-
-def IngrPars(pointDB, firCell, secCell):
+def IngrPars(pointDB, firCell, secCell, wsT, ForE):
     for k in range(ws1['B'+str(pointDB)].value): #для каждого ингр
         pointRep = 19
         while(wsT['A'+str(pointRep)].value != ws1['A'+str(pointDB + 2 + k)].value): #ищет ингр в отчете
             pointRep+=1
         if(wsT[str(firCell)+str(pointRep)].value): #заполнение сумст
-            wsT[str(secCell)+str(pointRep)].value += float(ws1['E'+str(pointDB + 2 + k)].value)
+            wsT[str(secCell)+str(pointRep)].value += float(ws1[ForE+str(pointDB + 2 + k)].value)
         else:
-            wsT[str(firCell)+str(pointRep)].value = ws1['E'+str(pointDB + 2 + k)].value 
+            wsT[str(firCell)+str(pointRep)].value = ws1[ForE+str(pointDB + 2 + k)].value 
+        
+        wsT['R'+str(pointRep)].value = '=P'+str(pointRep)+'*'+str(ws1['B'+str(pointDB+2+k)].value)
 
-def PrepareTable(letters):
+def PrepareTable(letters, wsT):
     wsT['D17'].value = str('')
     wsT['D11'].value = str('')
     wsT['H17'].value = str('')
@@ -137,4 +146,9 @@ def PrepareTable(letters):
         for num in range (19, 81):
             wsT[letter+str(num)].value = float()
 
-FillReport()
+    wsT['S84'].value = '=SUM(R19:S81)'
+
+    for i in range(19, 81):
+        wsT['P'+str(i)].value = '=SUM(D'+str(i)+':O'+str(i)+')/1000'
+        wsT['V'+str(i)].value = '=P'+str(i)+'*B5'
+
