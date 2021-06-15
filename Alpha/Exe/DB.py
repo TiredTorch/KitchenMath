@@ -1,6 +1,6 @@
 import openpyxl
 import os
-
+#TKInter, графдизайн,  
 wb = openpyxl.reader.excel.load_workbook(filename="DB.xlsx", data_only = True)
 wbT = openpyxl.reader.excel.load_workbook(filename="template.xlsx", data_only = True)
 wb.active = 0  #база данных ингредиентов
@@ -104,9 +104,9 @@ def FillReport():
             os.system('CLS')
             print('Для '+str((DT+1))+' блюда: ')
             print('Сад:')
-            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT1, 'E')
+            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT1, 'C')
             print('Ясли:')
-            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT2, 'F')
+            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT2, 'D')
 
     
     wbT.save(str(input('Введите название документа: '))+'.xlsx')
