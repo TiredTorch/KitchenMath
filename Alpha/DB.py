@@ -11,29 +11,22 @@ wsT1 = wbT.active
 wbT.active = 1  #переменные шаблона Яслей
 wsT2 = wbT.active
 
-def AddIngredient(): 
-    print(chr(27) + "[2J")
-
+def AddIngredient(name, price): 
     i = 1
     while(ws0['A'+str(i)].value != '*'):
         i+=1
     
-    ws0['B'+str(i)].value = input('Название ингредиента: ')
-    ws0['C'+str(i)].value = float(input('Его цена: '))
+    ws0['B'+str(i)].value = str(name)
+    ws0['C'+str(i)].value = float(price)
     ws0['A'+str(i)].value = int(ws0['A'+str(i-1)].value) + 1
     ws0['A'+str(i+1)].value = '*'
     wb.save("DB.xlsx")
 
-def AddDish():    
-    print(chr(27) + "[2J")
-    
+
+def StartDishPars():
     i = 1
     while(ws1['H'+str(i)].value != '*'):
         i+=1
-
-    ws1['A'+str(i)].value = input('Введите название блюда: ')
-    ws1['B'+str(i)].value = int(input('Введите количество ингредиентов: '))
-    ws1['C'+str(i)].value = ''
 
     ws1['A'+str(i+1)].value = 'Продукты'
     ws1['B'+str(i+1)].value = 'Цена за кг'
@@ -42,34 +35,45 @@ def AddDish():
     ws1['E'+str(i+1)].value = 'СумСт (сад)'
     ws1['F'+str(i+1)].value = 'СумСт (ясли)'
     ws1['G'+str(i)].value = 'ID:'
+    return i
 
-    for j in range(ws1['B'+str(i)].value):
-        a = int(input('Укажите ID ингредиента '+str(j+1)+': '))
+def AddIngrToDish(ID, amount1, amount2):
+
+    a = int(ID)
         
-        ws1['A'+str(i+2+j)].value = ws0['B'+str(a+2)].value
-        ws1['B'+str(i+2+j)].value = ws0['C'+str(a+2)].value
+    ws1['A'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = ws0['B'+str(a+2)].value
+    ws1['B'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = ws0['C'+str(a+2)].value
 
-        ws1['C'+str(i+2+j)].value = float(input('Введите кол-во для сада: '))
-        ws1['D'+str(i+2+j)].value = float(input('Введите кол-во для яслей: '))
+    ws1['C'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = float(amount1)
+    ws1['D'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = float(amount2)
 
-        ws1['E'+str(i+2+j)].value = '=B'+str(i+2+j)+'*C'+str(i+2+j)+'/1000'
-        ws1['F'+str(i+2+j)].value = '=B'+str(i+2+j)+'*D'+str(i+2+j)+'/1000'
-
-        print(chr(27) + "[2J")
-
-        ws1['E'+str(i+3+int(ws1['B'+str(i)].value))].value = 'Сумма: '
-        ws1['E'+str(i+4+int(ws1['B'+str(i)].value))].value = '=SUM(E'+str(i+2)+':E'+str(i+2+j)+')'
-        ws1['F'+str(i+4+int(ws1['B'+str(i)].value))].value = '=SUM(F'+str(i+2)+':F'+str(i+2+j)+')'
+    ws1['E'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = float(float(ws0['C'+str(a+2)].value) * float(amount1) / 1000)
+    ws1['F'+str(StartDishPars()+2+int(ws1['B'+str(StartDishPars())].value))].value = float(float(ws0['C'+str(a+2)].value) * float(amount2) / 1000)
 
 
-    ws1['H'+str(i+6+int(ws1['B'+str(i)].value))].value = '*'
+    ws1['B'+str(StartDishPars())].value = ws1['B'+str(StartDishPars())].value + 1
+
+def EndDishPars(dishName):
+    ws1['E'+str(StartDishPars()+3+int(ws1['B'+str(StartDishPars())].value))].value = 'Сумма: '
+    
+    ws1['E'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value = 0
+    for k in range (int(ws1['B'+str(StartDishPars())].value) - 1):
+        ws1['E'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value = (ws1['E'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value) + float(ws1['E'+str(StartDishPars()+2+k)].value)
+    
+    ws1['F'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value = 0
+    for k in range (int(ws1['B'+str(StartDishPars())].value) - 1):
+        ws1['F'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value = (ws1['F'+str(StartDishPars()+4+int(ws1['B'+str(StartDishPars())].value))].value) + float(ws1['F'+str(StartDishPars()+2+k)].value)
+
+    ws1['H'+str(StartDishPars()+6+int(ws1['B'+str(StartDishPars())].value))].value = '*'
+    ws1['B'+str(StartDishPars()+6+int(ws1['B'+str(StartDishPars())].value))].value = 0
 
     temp = 1
-    while(ws1['H'+str(i-temp)].value == None):
+    while(ws1['H'+str(StartDishPars()-temp)].value == None):
         temp+=1
 
-    ws1['H'+str(i)].value = ws1['H'+str(i-temp)].value + 1
+    ws1['H'+str(StartDishPars())].value = ws1['H'+str(StartDishPars()-temp)].value + 1
 
+    ws1['A'+str(StartDishPars())].value = dishName
     wb.save("DB.xlsx")
 
 def ShowIngredientID():
@@ -89,32 +93,29 @@ def ShowDishesID():
         print(ws1['A'+str(i)].value + ' :: ' + str(ws1['H'+str(i)].value))
         i+=(ws1['B'+str(i)].value + 6)
 
-def FillReport():
 
-
+def StartReport():
     letters = ['D','F','H','J','L','N']
     PrepareTable(letters, wsT1)
     PrepareTable(letters, wsT2)
 
-    for FT in range (3):
-        print(chr(27) + "[2J")
-        dishesAmount = int(input('Сколько блюд в ' + str(FT + 1) + ' приеме пищи: '))
-        for DT in range (dishesAmount):
-            print(chr(27) + "[2J")
-            print('Для '+str((DT+1))+' блюда: ')
-            print('Сад:')
-            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT1, 'E')
-            print('Ясли:')
-            DishPars(str(letters[FT * 2]), str(letters[(FT * 2) + 1]), wsT2, 'F')
-
+def FillReport(name):
     
-    wbT.save(str(input('Введите название документа: '))+'.xlsx')
+    wbT.save(str(name)+'.xlsx')
 
-def DishPars(firCell, secCell, wsT, ForE):
+def ReportDishesFill(bool, tryFood, ID, amount):
 
-    tempDishID = int(input('Введите ID блюда: '))
+    letters = ['D','F','H','J','L','N']
+    if bool == True:
+        DishPars(str(letters[tryFood*2]), str(letters[(tryFood*2)+1]), wsT1, 'E', ID, amount)
+    else:
+        DishPars(str(letters[tryFood*2]), str(letters[(tryFood*2)+1]), wsT2, 'F', ID, amount)
 
-    wsT[str(firCell)+'17'].value += (input('Введите его количество: ') + '\n')
+def DishPars(firCell, secCell, wsT, ForE, ID, amount):
+
+    tempDishID = int(ID)
+
+    wsT[str(firCell)+'17'].value += (str(amount) + '\n')
 
     pointDB = 1
     while(tempDishID != ws1['H'+str(pointDB)].value): #ищет блюдо парсом по айди
